@@ -1,13 +1,16 @@
 FROM dockurr/windows
 
-# Required storage fix
+# Fix storage
 RUN mkdir -p /storage
 
-# IMPORTANT (no over config)
-ENV KVM=0
-ENV RAM_SIZE=1G
-ENV CPU_CORES=1
-ENV DISK_SIZE=8G
-ENV PORT=8006
+# Install tiny web server
+RUN apt update && apt install -y python3
 
+# Force no KVM
+ENV KVM=0
+
+# Railway port
 EXPOSE 8006
+
+# CRITICAL FIX: keep-alive + Windows boot
+CMD sh -c "python3 -m http.server $PORT & sleep 5 && /start.sh"
